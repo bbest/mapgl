@@ -53,7 +53,7 @@ dependencies:
     script:
       - "pmtiles.js"
   - name: h3j-h3t
-    version: 0.9.5
+    version: 0.9.6
     src: "htmlwidgets/lib/h3j-h3t"
     script:
       - "h3j_h3t.js"
