@@ -1,5 +1,5 @@
 // build marker for bbest/mapgl feat/add-h3t-source — bump on every JS change
-window.__mapgl_h3t_build = "2026-04-22e";
+window.__mapgl_h3t_build = "2026-04-22f";
 console.log("[mapgl] maplibregl_compare.js build:", window.__mapgl_h3t_build);
 
 function evaluateExpression(expression, properties) {
@@ -4253,13 +4253,13 @@ HTMLWidgets.widget({
                 // In a compare widget each side only has its own layers, but a single
                 // layers_control can reference ids from both sides (e.g. "sp" and "env")
                 // so the toggle can fire on both maps. If the first id isn't present on
-                // this map, fall back to "visible" rather than throwing.
+                // this map, fall back to "visible". We pre-check with getLayer() because
+                // getLayoutProperty() on a missing layer fires an error event (not a
+                // throw), which try/catch cannot silence.
                 const firstLayerId = layerIds[0];
-                let initialVisibility;
-                try {
-                  initialVisibility = map.getLayoutProperty(firstLayerId, "visibility");
-                } catch (err) {
-                  initialVisibility = "visible";
+                let initialVisibility = "visible";
+                if (map.getLayer(firstLayerId)) {
+                  initialVisibility = map.getLayoutProperty(firstLayerId, "visibility") || "visible";
                 }
                 link.className = initialVisibility === "none" ? "" : "active";
 
@@ -4273,20 +4273,21 @@ HTMLWidgets.widget({
                     this.getAttribute("data-layer-ids"),
                   );
                   // read visibility from whichever map actually has this layer
-                  // (mirrors the defensive check at init time above)
+                  // (pre-check with getLayer() — getLayoutProperty fires an error
+                  // event on missing layers and try/catch cannot silence it)
                   const firstLayerId = layerIds[0];
                   let visibility;
                   for (const m of [map, beforeMap, afterMap]) {
-                    try {
-                      visibility = m.getLayoutProperty(firstLayerId, "visibility");
-                      if (visibility !== undefined) break;
-                    } catch (err) { /* not on this map */ }
+                    if (!m || !m.getLayer(firstLayerId)) continue;
+                    visibility = m.getLayoutProperty(firstLayerId, "visibility");
+                    if (visibility !== undefined) break;
                   }
                   const newVis = (visibility || "visible") === "visible" ? "none" : "visible";
                   const allMaps = [beforeMap, afterMap];
                   layerIds.forEach((layerId) => {
                     allMaps.forEach((m) => {
-                      try { m.setLayoutProperty(layerId, "visibility", newVis); } catch(err) {}
+                      if (!m || !m.getLayer(layerId)) return;
+                      m.setLayoutProperty(layerId, "visibility", newVis);
                     });
                   });
                   this.className = newVis === "visible" ? "active" : "";
