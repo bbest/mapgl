@@ -1,5 +1,5 @@
 // build marker for bbest/mapgl feat/add-h3t-source — bump on every JS change
-window.__mapgl_h3t_build = "2026-04-22d";
+window.__mapgl_h3t_build = "2026-04-22e";
 console.log("[mapgl] maplibregl_compare.js build:", window.__mapgl_h3t_build);
 
 function evaluateExpression(expression, properties) {
