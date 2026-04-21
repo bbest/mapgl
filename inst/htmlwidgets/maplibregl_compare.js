@@ -4241,12 +4241,18 @@ HTMLWidgets.widget({
                 link.setAttribute("data-layer-ids", JSON.stringify(layerIds));
                 link.setAttribute("data-layer-type", config.type);
 
-                // Check if the first layer's visibility is set to "none" initially
+                // Check if the first layer's visibility is set to "none" initially.
+                // In a compare widget each side only has its own layers, but a single
+                // layers_control can reference ids from both sides (e.g. "sp" and "env")
+                // so the toggle can fire on both maps. If the first id isn't present on
+                // this map, fall back to "visible" rather than throwing.
                 const firstLayerId = layerIds[0];
-                const initialVisibility = map.getLayoutProperty(
-                  firstLayerId,
-                  "visibility",
-                );
+                let initialVisibility;
+                try {
+                  initialVisibility = map.getLayoutProperty(firstLayerId, "visibility");
+                } catch (err) {
+                  initialVisibility = "visible";
+                }
                 link.className = initialVisibility === "none" ? "" : "active";
 
                 // Show or hide layer(s) when the toggle is clicked
@@ -4258,13 +4264,17 @@ HTMLWidgets.widget({
                   const layerIds = JSON.parse(
                     this.getAttribute("data-layer-ids"),
                   );
+                  // read visibility from whichever map actually has this layer
+                  // (mirrors the defensive check at init time above)
                   const firstLayerId = layerIds[0];
-                  const visibility = map.getLayoutProperty(
-                    firstLayerId,
-                    "visibility",
-                  );
-
-                  const newVis = visibility === "visible" ? "none" : "visible";
+                  let visibility;
+                  for (const m of [map, beforeMap, afterMap]) {
+                    try {
+                      visibility = m.getLayoutProperty(firstLayerId, "visibility");
+                      if (visibility !== undefined) break;
+                    } catch (err) { /* not on this map */ }
+                  }
+                  const newVis = (visibility || "visible") === "visible" ? "none" : "visible";
                   const allMaps = [beforeMap, afterMap];
                   layerIds.forEach((layerId) => {
                     allMaps.forEach((m) => {
