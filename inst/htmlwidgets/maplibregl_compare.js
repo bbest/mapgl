@@ -3046,6 +3046,20 @@ HTMLWidgets.widget({
               });
             });
           }
+          // Process H3T (tiled h3j) sources if provided
+          if (mapData.h3t_sources) {
+            mapData.h3t_sources.forEach(function (source) {
+              map.addH3TSource(source.id, {
+                tiles: source.tiles,
+                sourcelayer: source.sourcelayer,
+                geometry_type: source.geometry_type,
+                minzoom: source.minzoom,
+                maxzoom: source.maxzoom,
+                promoteId: source.promoteId,
+                debug: source.debug,
+              });
+            });
+          }
 
           if (mapData.markers) {
             if (!window.maplibreglMarkers) {
