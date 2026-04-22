@@ -1,5 +1,5 @@
 // build marker for bbest/mapgl feat/add-h3t-source — bump on every JS change
-window.__mapgl_h3t_build = "2026-04-22f";
+window.__mapgl_h3t_build = "2026-04-22g";
 console.log("[mapgl] maplibregl_compare.js build:", window.__mapgl_h3t_build);
 
 function evaluateExpression(expression, properties) {
@@ -3051,11 +3051,8 @@ HTMLWidgets.widget({
             });
           }
           // Process H3T (tiled h3j) sources if provided
-          const __mapSide = (map === beforeMap) ? "before" : (map === afterMap) ? "after" : "?";
-          console.log(`[mapgl/${__mapSide}] applyMapModifications: h3t_sources=${mapData.h3t_sources ? mapData.h3t_sources.length : 0}, layers=${mapData.layers ? mapData.layers.length : 0}`);
           if (mapData.h3t_sources) {
             mapData.h3t_sources.forEach(function (source) {
-              console.log(`[mapgl/${__mapSide}] addH3TSource id=${source.id}, sourcelayer=${source.sourcelayer}, tiles[0]=${source.tiles[0].slice(0, 80)}...`);
               map.addH3TSource(source.id, {
                 tiles: source.tiles,
                 sourcelayer: source.sourcelayer,
@@ -3203,7 +3200,6 @@ HTMLWidgets.widget({
           if (mapData.layers) {
             mapData.layers.forEach(function (layer) {
               try {
-                console.log(`[mapgl/${__mapSide}] addLayer id=${layer.id}, source=${typeof layer.source === 'string' ? layer.source : '[object]'}, source_layer=${layer.source_layer}`);
                 const layerConfig = {
                   id: layer.id,
                   type: layer.type,
