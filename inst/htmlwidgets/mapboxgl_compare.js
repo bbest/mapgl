@@ -1209,66 +1209,66 @@ HTMLWidgets.widget({
                 // If there's an active popup for this layer, remove it
                 if (
                   window._mapboxPopups &&
-                  window._mapboxPopups[message.layer_id]
+                  window._mapboxPopups[message.layer]
                 ) {
-                  window._mapboxPopups[message.layer_id].remove();
-                  delete window._mapboxPopups[message.layer_id];
+                  window._mapboxPopups[message.layer].remove();
+                  delete window._mapboxPopups[message.layer];
                 }
 
-                if (map.getLayer(message.layer_id)) {
+                if (map.getLayer(message.layer)) {
                   // Remove tooltip handlers
                   if (
                     window._mapboxHandlers &&
-                    window._mapboxHandlers[message.layer_id]
+                    window._mapboxHandlers[message.layer]
                   ) {
-                    const handlers = window._mapboxHandlers[message.layer_id];
+                    const handlers = window._mapboxHandlers[message.layer];
                     if (handlers.mousemove) {
                       map.off(
                         "mousemove",
-                        message.layer_id,
+                        message.layer,
                         handlers.mousemove,
                       );
                     }
                     if (handlers.mouseleave) {
                       map.off(
                         "mouseleave",
-                        message.layer_id,
+                        message.layer,
                         handlers.mouseleave,
                       );
                     }
                     // Clean up the reference
-                    delete window._mapboxHandlers[message.layer_id];
+                    delete window._mapboxHandlers[message.layer];
                   }
 
                   // Remove click handlers for popups
                   if (
                     window._mapboxClickHandlers &&
-                    window._mapboxClickHandlers[message.layer_id]
+                    window._mapboxClickHandlers[message.layer]
                   ) {
                     map.off(
                       "click",
-                      message.layer_id,
-                      window._mapboxClickHandlers[message.layer_id],
+                      message.layer,
+                      window._mapboxClickHandlers[message.layer],
                     );
-                    delete window._mapboxClickHandlers[message.layer_id];
+                    delete window._mapboxClickHandlers[message.layer];
                   }
 
                   // Remove the layer
-                  map.removeLayer(message.layer_id);
+                  map.removeLayer(message.layer);
                 }
-                if (map.getSource(message.layer_id)) {
-                  map.removeSource(message.layer_id);
+                if (map.getSource(message.layer)) {
+                  map.removeSource(message.layer);
                 }
 
                 // Clean up tracked layer state
                 const mapId = map.getContainer().id;
                 if (window._mapglLayerState && window._mapglLayerState[mapId]) {
                   const layerState = window._mapglLayerState[mapId];
-                  delete layerState.filters[message.layer_id];
-                  delete layerState.paintProperties[message.layer_id];
-                  delete layerState.layoutProperties[message.layer_id];
-                  delete layerState.tooltips[message.layer_id];
-                  delete layerState.popups[message.layer_id];
+                  delete layerState.filters[message.layer];
+                  delete layerState.paintProperties[message.layer];
+                  delete layerState.layoutProperties[message.layer];
+                  delete layerState.tooltips[message.layer];
+                  delete layerState.popups[message.layer];
                   // Note: legends are not tied to specific layers, so we don't clear them here
                 }
               } else if (message.type === "fit_bounds") {

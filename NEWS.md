@@ -1,5 +1,7 @@
 # mapgl (development version)
 
+* `clear_layer()` now actually removes the layer on a **compare** proxy. The R side sends the layer id as `layer` (as the single-map handler expects and reads), but both compare handlers read `message.layer_id`, which no message has ever carried — so `map.getLayer(undefined)` was falsy and the call was a silent no-op on every compare widget, leaving the layer and its source in place. Subsequent attempts to re-add the same id then failed with "Layer with id ... already exists".
+
 * The layers control from `add_layers_control()` is now a first-class map control: it is added through the GL `addControl()` API and stacks with the other controls in its corner (in call order) instead of floating over them, so it no longer collides with navigation, fullscreen, and similar controls. Related changes:
     * **Visual change:** the default appearance now matches the native controls — white background, monochrome items (active layers in dark text, inactive in gray), and a 29x29 collapsed icon button. All styling arguments work as before; to restore the previous blue active style, use `active_color = "#4a90e2"` and `active_text_color = "#ffffff"`.
     * The `margin_*` arguments are no longer applied by default (the native stack handles spacing) but are still honored when explicitly set.
